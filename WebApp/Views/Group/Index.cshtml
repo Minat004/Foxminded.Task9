@@ -1,0 +1,21 @@
+﻿@model List<Group>
+
+@{
+    ViewBag.Title = "Groups";
+    Layout = "_Layout";
+}
+
+<h2>Groups</h2>
+
+<table>
+    <tbody>
+    @foreach (var group in Model)
+    {
+        <tr>
+            <td>@group.Id</td>
+            <td>@group.Name</td>
+            <td>@group.CourseId</td>
+        </tr>
+    }
+    </tbody>
+</table>

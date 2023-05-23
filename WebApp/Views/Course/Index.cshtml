@@ -1,0 +1,21 @@
+﻿@model List<Course>
+
+@{
+    ViewBag.Title = "Courses";
+    Layout = "_Layout";
+}
+
+<h2>Courses</h2>
+
+<table>
+    <tbody>
+    @foreach (var course in Model)
+    {
+        <tr>
+            <td>@course.Id</td>
+            <td>@course.Name</td>
+            <td>@course.Description</td>
+        </tr>
+    }
+    </tbody>
+</table>
