@@ -5,7 +5,7 @@ namespace WebApp.Repositories;
 public interface ICourseRepository
 {
     public void Create();
-    public IEnumerable<Course> GetAll();
+    public IEnumerable<Course?> GetAll();
     public Task<IEnumerable<Course>> GetAllAsync();
     public void Update(Course course);
     public void Update(int id);

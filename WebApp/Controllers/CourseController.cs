@@ -15,7 +15,14 @@ public class CourseController : Controller
 
     public IActionResult Index()
     {
-        var courses = (List<Course>)_courseService.GetAll();
+        var courses = _courseService.GetAll().ToList();
         return View(courses);
+    }
+
+    [Route("{controller=Course}/{id:int}")]
+    public IActionResult Groups(int id)
+    {
+        var groups = _courseService.GetGroups(id).ToList();
+        return View(groups);
     }
 }

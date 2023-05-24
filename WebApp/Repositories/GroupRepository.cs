@@ -19,7 +19,14 @@ public class GroupRepository : IGroupRepository
 
     public IEnumerable<Group> GetAll()
     {
-        return _context.Groups!.ToList();
+        var groups = _context.Groups!.ToList();
+        var courses = _context.Courses!.ToList();
+        
+        foreach (var group in groups)
+        {
+            group.Course = courses.FirstOrDefault(x => x.Id == group.CourseId);
+            yield return group;
+        }
     }
 
     public Task<IEnumerable<Group>> GetAllAsync()

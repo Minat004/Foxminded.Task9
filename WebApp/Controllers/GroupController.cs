@@ -15,7 +15,8 @@ public class GroupController : Controller
 
     public IActionResult Index()
     {
-        var groups = (List<Group>)_groupService.GetAll();
+        var groups = _groupService.GetAll().ToList();
         return View(groups);
     }
+    
 }

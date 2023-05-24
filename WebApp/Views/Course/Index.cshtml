@@ -7,15 +7,24 @@
 
 <h2>Courses</h2>
 
-<table>
-    <tbody>
-    @foreach (var course in Model)
-    {
+<table class="table">
+    <thead>
         <tr>
-            <td>@course.Id</td>
-            <td>@course.Name</td>
-            <td>@course.Description</td>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <th scope="row">@course.Id</th>
+                <td>
+                    <a asp-controller="Course" asp-action="Groups" asp-route-id="@course.Id">@course.Name</a>
+                </td>
+                <td>@course.Description</td>
+            </tr>
+        }
     </tbody>
 </table>

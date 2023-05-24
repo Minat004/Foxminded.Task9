@@ -18,9 +18,16 @@ public class CourseRepository : ICourseRepository
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Course> GetAll()
+    public IEnumerable<Course?> GetAll()
     {
-        return _context.Courses!.ToList();
+        var courses = _context.Courses!.ToList();
+        var groups = _context.Groups!.ToList();
+        
+        foreach (var course in courses)
+        {
+            course.Groups.ToList().AddRange(groups.Where(x => x.CourseId == course.Id));
+            yield return course;
+        }
     }
 
     public async Task<IEnumerable<Course>> GetAllAsync()

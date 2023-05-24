@@ -1,20 +1,20 @@
 ﻿@model List<Group>
 
 @{
-    ViewBag.Title = "Groups";
+    ViewBag.Title = Model[0].Course!.Name;
     Layout = "_Layout";
 }
 
-<h2>Groups</h2>
+<h2>@Model[0].Course!.Name</h2>
 
 <table class="table">
     <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Course</th>
-            </tr>
-        </thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Course</th>
+    </tr>
+    </thead>
     <tbody>
     @foreach (var group in Model)
     {

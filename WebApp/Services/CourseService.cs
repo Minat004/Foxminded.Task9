@@ -12,5 +12,10 @@ public class CourseService : ICourseService
         _courseRepository = courseRepository;
     }
 
-    public IEnumerable<Course> GetAll() => _courseRepository.GetAll();
+    public IEnumerable<Course?> GetAll() => _courseRepository.GetAll();
+    
+    public IEnumerable<Group> GetGroups(int id)
+    {
+        return _courseRepository.GetAll().FirstOrDefault(x => x!.Id == id)!.Groups;
+    }
 }
