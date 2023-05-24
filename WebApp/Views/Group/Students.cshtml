@@ -6,3 +6,34 @@
 }
 
 <h2>@Model[0].Group!.Name</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">First name</th>
+        <th scope="col">Last name</th>
+        <th scope="col">Group</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var student in Model)
+    {
+        <tr>
+            <th scope="row">@student.Id</th>
+            <td>@student.FirstName</td>
+            <td>@student.LastName</td>
+            <td>@student.Group!.Name</td>
+            <td>
+                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<div id="btn-fix">
+    <button class="btn btn-primary btn-square-md rounded-circle"><h1><i class="bi bi-person-plus-fill"></i></h1></button>
+</div>

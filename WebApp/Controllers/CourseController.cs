@@ -1,28 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 using WebApp.Services;
+using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers;
 
 public class CourseController : Controller
 {
     private readonly ICourseService _courseService;
+    private readonly List<Course?> _courses;
 
     public CourseController(ICourseService courseService)
     {
         _courseService = courseService;
+        _courses = courseService.GetAll().ToList();
     }
 
     public IActionResult Index()
     {
-        var courses = _courseService.GetAll().ToList();
-        return View(courses);
+        return View(_courses);
     }
 
     [Route("[controller]/{courseId:int}")]
     public IActionResult Groups(int courseId)
     {
         var groups = _courseService.GetGroups(courseId).ToList();
+
+        if (groups.Count == 0)
+        {
+            groups.Add(new Group()
+            {
+                Course = _courses.FirstOrDefault(x => x!.Id == courseId)
+            });
+        }
+        
         return View(groups);
     }
 }

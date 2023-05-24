@@ -1,5 +1,7 @@
 ﻿using WebApp.Models;
 using WebApp.Repositories;
+using WebApp.Repositories.Interfaces;
+using WebApp.Services.Interfaces;
 
 namespace WebApp.Services;
 
@@ -18,4 +20,6 @@ public class GroupService : IGroupService
     {
         return _groupRepository.GetAll().FirstOrDefault(x => x.Id == id)!.Students;
     }
+
+    public void Update(Group group) => _groupRepository.Update(group);
 }

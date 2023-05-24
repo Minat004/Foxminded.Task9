@@ -1,6 +1,6 @@
 ﻿using WebApp.Models;
 
-namespace WebApp.Repositories;
+namespace WebApp.Repositories.Interfaces;
 
 public interface ICourseRepository
 {

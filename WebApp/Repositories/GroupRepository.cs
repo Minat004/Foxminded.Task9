@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
 using WebApp.Models;
+using WebApp.Repositories.Interfaces;
 
 namespace WebApp.Repositories;
 
@@ -30,5 +31,11 @@ public class GroupRepository : IGroupRepository
     public async Task<IEnumerable<Group>> GetAllAsync()
     {
         return await _context.Groups!.ToListAsync();
+    }
+
+    public void Update(Group group)
+    {
+        _context.Groups!.Update(group);
+        _context.SaveChanges();
     }
 }

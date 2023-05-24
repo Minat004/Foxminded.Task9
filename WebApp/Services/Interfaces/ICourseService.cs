@@ -1,6 +1,6 @@
 ﻿using WebApp.Models;
 
-namespace WebApp.Services;
+namespace WebApp.Services.Interfaces;
 
 public interface ICourseService
 {
