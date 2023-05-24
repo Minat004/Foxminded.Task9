@@ -12,12 +12,7 @@ public class CourseRepository : ICourseRepository
     {
         _context = context;
     }
-
-    public void Create()
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public IEnumerable<Course?> GetAll()
     {
         var courses = _context.Courses!.ToList();
@@ -33,25 +28,5 @@ public class CourseRepository : ICourseRepository
     public async Task<IEnumerable<Course>> GetAllAsync()
     {
         return await _context.Courses!.ToListAsync();
-    }
-
-    public void Update(Course course)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Update(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(Course course)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(int id)
-    {
-        throw new NotImplementedException();
     }
 }

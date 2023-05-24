@@ -12,8 +12,10 @@ public class GroupService : IGroupService
         _groupRepository = groupRepository;
     }
 
-    public IEnumerable<Group> GetAll()
+    public IEnumerable<Group> GetAll() => _groupRepository.GetAll();
+
+    public IEnumerable<Student> GetStudents(int id)
     {
-        return _groupRepository.GetAll();
+        return _groupRepository.GetAll().FirstOrDefault(x => x.Id == id)!.Students;
     }
 }

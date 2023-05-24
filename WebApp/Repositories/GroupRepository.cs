@@ -1,4 +1,5 @@
-﻿using WebApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApp.Data;
 using WebApp.Models;
 
 namespace WebApp.Repositories;
@@ -12,45 +13,22 @@ public class GroupRepository : IGroupRepository
         _context = context;
     }
 
-    public void Create()
-    {
-        throw new NotImplementedException();
-    }
-
     public IEnumerable<Group> GetAll()
     {
         var groups = _context.Groups!.ToList();
         var courses = _context.Courses!.ToList();
+        var students = _context.Students!.ToList();
         
         foreach (var group in groups)
         {
             group.Course = courses.FirstOrDefault(x => x.Id == group.CourseId);
+            group.Students.ToList().AddRange(students.Where(x => x.GroupId == group.Id));
             yield return group;
         }
     }
 
-    public Task<IEnumerable<Group>> GetAllAsync()
+    public async Task<IEnumerable<Group>> GetAllAsync()
     {
-        throw new NotImplementedException();
-    }
-
-    public void Update(Group course)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Update(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(Group course)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(int id)
-    {
-        throw new NotImplementedException();
+        return await _context.Groups!.ToListAsync();
     }
 }

@@ -1,0 +1,35 @@
+﻿@model List<Student>
+
+@{
+    ViewBag.Title = "Students";
+    Layout = "_Layout";
+}
+
+<h2>Students</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">First name</th>
+        <th scope="col">Last name</th>
+        <th scope="col">Group</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var student in Model)
+    {
+        <tr>
+            <th scope="row">@student.Id</th>
+            <td>@student.FirstName</td>
+            <td>@student.LastName</td>
+            <td>@student.Group!.Name</td>
+            <td>
+                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

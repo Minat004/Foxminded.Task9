@@ -19,10 +19,10 @@ public class CourseController : Controller
         return View(courses);
     }
 
-    [Route("{controller=Course}/{id:int}")]
-    public IActionResult Groups(int id)
+    [Route("[controller]/{courseId:int}")]
+    public IActionResult Groups(int courseId)
     {
-        var groups = _courseService.GetGroups(id).ToList();
+        var groups = _courseService.GetGroups(courseId).ToList();
         return View(groups);
     }
 }

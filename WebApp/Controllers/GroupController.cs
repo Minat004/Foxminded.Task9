@@ -18,5 +18,11 @@ public class GroupController : Controller
         var groups = _groupService.GetAll().ToList();
         return View(groups);
     }
-    
+
+    [Route("[controller]/{groupId:int}")]
+    public IActionResult Students(int groupId)
+    {
+        var students = _groupService.GetStudents(groupId).ToList();
+        return View(students);
+    }
 }
