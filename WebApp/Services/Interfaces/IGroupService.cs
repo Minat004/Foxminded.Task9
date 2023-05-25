@@ -9,4 +9,6 @@ public interface IGroupService
     public IEnumerable<Student> GetStudents(int id);
 
     public void Update(Group group);
+
+    public void UpdateName(int id, string newName);
 }

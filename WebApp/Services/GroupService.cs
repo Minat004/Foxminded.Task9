@@ -22,4 +22,12 @@ public class GroupService : IGroupService
     }
 
     public void Update(Group group) => _groupRepository.Update(group);
+    
+    public void UpdateName(int id, string newName)
+    {
+        var group = _groupRepository.GetAll().FirstOrDefault(x => x.Id == id);
+        group!.Name = newName;
+        
+        _groupRepository.Update(group);
+    }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using WebApp.Models;
@@ -6,12 +7,12 @@ using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers;
 
-public class GroupController : Controller
+public class GroupsController : Controller
 {
     private readonly IGroupService _groupService;
     private readonly List<Group> _groups;
 
-    public GroupController(IGroupService groupService)
+    public GroupsController(IGroupService groupService)
     {
         _groupService = groupService;
         _groups = groupService.GetAll().ToList();
@@ -44,5 +45,19 @@ public class GroupController : Controller
         var group = _groups.FirstOrDefault(x => x.Id == groupId);
         
         return View(group);
+    }
+    
+    [HttpPost]
+    public IActionResult EditGroup(Group group)
+    {
+        _groupService.UpdateName(group.Id, group.Name);
+
+        return RedirectToAction("Index");
+    }
+    
+    [Route("[controller]/[action]")]
+    public IActionResult Add()
+    {
+        return View();
     }
 }
