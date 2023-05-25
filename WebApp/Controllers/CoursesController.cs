@@ -5,12 +5,12 @@ using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers;
 
-public class CourseController : Controller
+public class CoursesController : Controller
 {
     private readonly ICourseService _courseService;
     private readonly List<Course?> _courses;
 
-    public CourseController(ICourseService courseService)
+    public CoursesController(ICourseService courseService)
     {
         _courseService = courseService;
         _courses = courseService.GetAll().ToList();

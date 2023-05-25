@@ -1,11 +1,11 @@
 ﻿@model List<Group>
 
 @{
-    ViewBag.Title = "Groups";
+    ViewBag.Title = Model[0].Course!.Name;
     Layout = "_Layout";
 }
 
-<h2>Groups</h2>
+<h2>@Model[0].Course!.Name</h2>
 
 <table class="table">
     <thead>
@@ -24,8 +24,8 @@
             <td>@group.Name</td>
             <td>@group.Course!.Name</td>
             <td>
-                <a class="btn btn-primary" asp-controller="Group" asp-action="Students" asp-route-groupId="@group.Id">Students</a>
-                <a class="btn btn-primary" asp-controller="Group" asp-action="Edit" asp-route-groupId="@group.Id">Edit</a>
+                <a class="btn btn-primary" asp-controller="Groups" asp-action="Students" asp-route-groupId="@group.Id">Students</a>
+                <a class="btn btn-primary" asp-controller="Groups" asp-action="Edit" asp-route-groupId="@group.Id">Edit</a>
                 <button type="button" class="btn btn-danger">Delete</button>
             </td>
         </tr>
@@ -34,5 +34,7 @@
 </table>
 
 <div id="btn-fix">
-    <button class="btn btn-primary btn-square-md rounded-circle"><h1><i class="bi bi-person-plus-fill"></i></h1></button>
+    <a class="btn btn-primary btn-square-md rounded-circle" asp-controller="Groups" asp-action="Add">
+        <h1><i class="bi bi-person-plus-fill"></i></h1>
+    </a>
 </div>

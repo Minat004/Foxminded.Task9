@@ -15,7 +15,7 @@ html {
 #btn-fix {
   position: fixed;
   bottom: 80px;
-  right: 40px;
+  right: 20px;
 }
 
 .btn-square-md {
@@ -24,7 +24,8 @@ html {
   max-height: 100% !important;
   height: 75px !important;
   text-align: center;
-  padding: 0;
+  vertical-align: center;
+  padding: 5px;
   font-size:12px;
 }
 
