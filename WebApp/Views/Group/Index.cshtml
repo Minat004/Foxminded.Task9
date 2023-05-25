@@ -25,7 +25,7 @@
             <td>@group.Course!.Name</td>
             <td>
                 <a class="btn btn-primary" asp-controller="Group" asp-action="Students" asp-route-groupId="@group.Id">Students</a>
-                <button type="button" class="btn btn-primary">Edit</button>
+                <a class="btn btn-primary" asp-controller="Group" asp-action="Edit" asp-route-groupId="@group.Id">Edit</a>
                 <button type="button" class="btn btn-danger">Delete</button>
             </td>
         </tr>

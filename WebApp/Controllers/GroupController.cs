@@ -37,4 +37,12 @@ public class GroupController : Controller
         
         return View(students);
     }
+    
+    [Route("[controller]/{groupId:int}/[action]")]
+    public IActionResult Edit(int groupId)
+    {
+        var group = _groups.FirstOrDefault(x => x.Id == groupId);
+        
+        return View(group);
+    }
 }
