@@ -1,0 +1,44 @@
+﻿@model Student
+
+@{
+    var fullName = Model.FirstName + " " + Model.LastName;
+    ViewBag.Title = "Edit " + fullName;
+    Layout = "_Layout";
+}
+
+<div class="mx-auto col-10 col-md-8 col-lg-6">
+    
+    <h2>@fullName</h2>
+
+    <form method="post" asp-controller="Students" asp-action="EditStudent">
+        <div class="form-group row mb-2">
+            <label asp-for="Id" class="col-sm-2 col-form-label">Id</label>
+            <div class="col-sm-10">
+                <input asp-for="Id" readonly class="form-control" type="text" placeholder="@Model.Id"/>
+            </div>
+        </div>
+        <div class="form-group row mb-2">
+            <label asp-for="FirstName" class="col-sm-2 col-form-label">First name</label>
+            <div class="col-sm-10">
+                <input asp-for="FirstName" class="form-control" type="text" value="@Model.FirstName"/>
+            </div>
+        </div>
+        <div class="form-group row mb-2">
+            <label asp-for="LastName" class="col-sm-2 col-form-label">Last name</label>
+            <div class="col-sm-10">
+                <input asp-for="LastName" class="form-control" type="text" value="@Model.LastName"/>
+            </div>
+        </div>
+        <div class="form-group row mb-2">
+            <label class="col-sm-2 col-form-label">Group</label>
+            <div class="col-sm-10">
+                <input readonly class="form-control" type="text" placeholder="@Model.Group!.Name"/>
+            </div>
+        </div>
+        <div class="d-flex flex-row-reverse">
+            <a class="btn btn-outline-danger" asp-controller="" asp-action="">Cancel</a>
+            <button type="submit" class="btn btn-primary mx-2">Save</button>
+        </div>
+    </form>
+    
+</div>
