@@ -1,23 +1,23 @@
-﻿using WebApp.Models;
-using WebApp.Repositories;
-using WebApp.Repositories.Interfaces;
-using WebApp.Services.Interfaces;
+﻿namespace WebApp.Services;
 
-namespace WebApp.Services;
-
-public class CourseService : ICourseService
+public class CourseService : IReadable<Course, Group>
 {
-    private readonly ICourseRepository _courseRepository;
+    private readonly IReadable<Course> _repository;
 
-    public CourseService(ICourseRepository courseRepository)
+    public CourseService(IReadable<Course> repository)
     {
-        _courseRepository = courseRepository;
+        _repository = repository;
     }
 
-    public IEnumerable<Course?> GetAll() => _courseRepository.GetAll();
+    public IEnumerable<Course> GetAll() => _repository.GetAll();
     
-    public IEnumerable<Group> GetGroups(int id)
+    public Task<IEnumerable<Course>> GetAllAsync()
     {
-        return _courseRepository.GetAll().FirstOrDefault(x => x!.Id == id)!.Groups;
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<Group> GetCollection(int id)
+    {
+        return _repository.GetAll().FirstOrDefault(x => x.Id == id)!.Groups;
     }
 }

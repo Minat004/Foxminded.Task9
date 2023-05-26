@@ -1,11 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WebApp.Data;
-using WebApp.Models;
-using WebApp.Repositories.Interfaces;
+﻿namespace WebApp.Repositories;
 
-namespace WebApp.Repositories;
-
-public class CourseRepository : ICourseRepository
+public class CourseRepository : IReadable<Course>
 {
     private readonly UniversityDbContext _context;
 
@@ -14,7 +9,7 @@ public class CourseRepository : ICourseRepository
         _context = context;
     }
     
-    public IEnumerable<Course?> GetAll()
+    public IEnumerable<Course> GetAll()
     {
         var courses = _context.Courses!.ToList();
         var groups = _context.Groups!.ToList();

@@ -1,33 +1,46 @@
-﻿using WebApp.Models;
-using WebApp.Repositories;
-using WebApp.Repositories.Interfaces;
-using WebApp.Services.Interfaces;
+﻿namespace WebApp.Services;
 
-namespace WebApp.Services;
-
-public class GroupService : IGroupService
+public class GroupService : IService<Group, Student>
 {
-    private readonly IGroupRepository _groupRepository;
+    private readonly IRepository<Group> _repository;
 
-    public GroupService(IGroupRepository groupRepository)
+    public GroupService(IRepository<Group> repository)
     {
-        _groupRepository = groupRepository;
+        _repository = repository;
     }
 
-    public IEnumerable<Group> GetAll() => _groupRepository.GetAll();
-
-    public IEnumerable<Student> GetStudents(int id)
-    {
-        return _groupRepository.GetAll().FirstOrDefault(x => x.Id == id)!.Students;
-    }
-
-    public void Update(Group group) => _groupRepository.Update(group);
+    public IEnumerable<Group> GetAll() => _repository.GetAll();
     
-    public void UpdateName(int id, string newName)
+    public Task<IEnumerable<Group>> GetAllAsync()
     {
-        var group = _groupRepository.GetAll().FirstOrDefault(x => x.Id == id);
-        group!.Name = newName;
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<Student> GetCollection(int id)
+    {
+        return _repository.GetAll().FirstOrDefault(x => x.Id == id)!.Students;
+    }
+
+    public void Update(Group group)
+    {
+        var newGroup = _repository.GetAll().FirstOrDefault(x => x.Id == group.Id);
+        newGroup!.Name = group.Name;
         
-        _groupRepository.Update(group);
+        _repository.Update(newGroup);
+    }
+
+    public void Add(Group group)
+    {
+        _repository.Add(group);
+    }
+
+    public void Delete(Group group)
+    {
+        if (group.Students.Count != 0)
+        {
+            return;
+        }
+        
+        _repository.Delete(group);
     }
 }

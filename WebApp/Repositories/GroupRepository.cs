@@ -1,11 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WebApp.Data;
-using WebApp.Models;
-using WebApp.Repositories.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApp.Repositories;
 
-public class GroupRepository : IGroupRepository
+public class GroupRepository : IRepository<Group>
 {
     private readonly UniversityDbContext _context;
 
@@ -36,6 +33,18 @@ public class GroupRepository : IGroupRepository
     public void Update(Group group)
     {
         _context.Groups!.Update(group);
+        _context.SaveChanges();
+    }
+
+    public void Add(Group group)
+    {
+        _context.Groups!.Add(group);
+        _context.SaveChanges();
+    }
+
+    public void Delete(Group group)
+    {
+        _context.Groups!.Remove(group);
         _context.SaveChanges();
     }
 }

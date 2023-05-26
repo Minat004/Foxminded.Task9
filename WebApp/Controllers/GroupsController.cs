@@ -1,20 +1,18 @@
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
-using WebApp.Models;
-using WebApp.Services;
-using WebApp.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApp.Controllers;
 
 public class GroupsController : Controller
 {
-    private readonly IGroupService _groupService;
+    private readonly IService<Group, Student> _groupService;
+    private readonly IReadable<Course> _courseService;
     private readonly List<Group> _groups;
 
-    public GroupsController(IGroupService groupService)
+    public GroupsController(IService<Group, Student> groupService, IReadable<Course> courseService)
     {
         _groupService = groupService;
+        _courseService = courseService;
         _groups = groupService.GetAll().ToList();
     }
 
@@ -26,7 +24,7 @@ public class GroupsController : Controller
     [Route("[controller]/{groupId:int}")]
     public IActionResult Students(int groupId)
     {
-        var students = _groupService.GetStudents(groupId).ToList();
+        var students = _groupService.GetCollection(groupId).ToList();
         
         if (students.Count == 0)
         {
@@ -50,7 +48,7 @@ public class GroupsController : Controller
     [HttpPost]
     public IActionResult EditGroup(Group group)
     {
-        _groupService.UpdateName(group.Id, group.Name);
+        _groupService.Update(group);
 
         return RedirectToAction("Index");
     }
@@ -58,6 +56,18 @@ public class GroupsController : Controller
     [Route("[controller]/[action]")]
     public IActionResult Add()
     {
-        return View();
+        var group = new Group
+        {
+            Courses = new SelectList(_courseService.GetAll(), "Id", "Name")
+        };
+        return View(group);
+    }
+
+    [HttpPost]
+    public IActionResult AddGroup(Group group)
+    {
+        _groupService.Add(group);
+        
+        return RedirectToAction("Index");
     }
 }

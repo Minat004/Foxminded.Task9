@@ -1,19 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApp.Models;
-using WebApp.Services;
-using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers;
 
 public class CoursesController : Controller
 {
-    private readonly ICourseService _courseService;
+    private readonly IReadable<Course, Group> _service;
     private readonly List<Course?> _courses;
 
-    public CoursesController(ICourseService courseService)
+    public CoursesController(IReadable<Course, Group> service)
     {
-        _courseService = courseService;
-        _courses = courseService.GetAll().ToList();
+        _service = service;
+        _courses = service.GetAll().ToList()!;
     }
 
     public IActionResult Index()
@@ -24,7 +21,7 @@ public class CoursesController : Controller
     [Route("[controller]/{courseId:int}")]
     public IActionResult Groups(int courseId)
     {
-        var groups = _courseService.GetGroups(courseId).ToList();
+        var groups = _service.GetCollection(courseId).ToList();
 
         if (groups.Count == 0)
         {

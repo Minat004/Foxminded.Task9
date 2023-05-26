@@ -1,4 +1,7 @@
-﻿namespace WebApp.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace WebApp.Models;
 
 public partial class Group
 {
@@ -7,6 +10,9 @@ public partial class Group
     public int? CourseId { get; set; }
 
     public string Name { get; set; } = null!;
+
+    [NotMapped]
+    public SelectList? Courses { get; set; }
 
     public virtual Course? Course { get; set; }
 

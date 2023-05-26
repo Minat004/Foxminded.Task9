@@ -1,4 +1,7 @@
-﻿namespace WebApp.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace WebApp.Models;
 
 public partial class Student
 {
@@ -9,6 +12,9 @@ public partial class Student
     public string FirstName { get; set; } = null!;
 
     public string LastName { get; set; } = null!;
+    
+    [NotMapped]
+    public SelectList? Groups { get; set; }
 
     public virtual Group? Group { get; set; }
 }

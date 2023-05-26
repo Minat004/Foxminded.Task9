@@ -1,11 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WebApp.Data;
-using WebApp.Models;
-using WebApp.Repositories.Interfaces;
+﻿namespace WebApp.Repositories;
 
-namespace WebApp.Repositories;
-
-public class StudentRepository : IStudentRepository
+public class StudentRepository : IRepository<Student>
 {
     private readonly UniversityDbContext _context;
 
@@ -29,5 +24,23 @@ public class StudentRepository : IStudentRepository
     public async Task<IEnumerable<Student>> GetAllAsync()
     {
         return await _context.Students!.ToListAsync();
+    }
+
+    public void Update(Student group)
+    {
+        _context.Students!.Update(group);
+        _context.SaveChanges();
+    }
+
+    public void Add(Student student)
+    {
+        _context.Students!.Add(student);
+        _context.SaveChanges();
+    }
+
+    public void Delete(Student student)
+    {
+        _context.Students!.Remove(student);
+        _context.SaveChanges();
     }
 }
