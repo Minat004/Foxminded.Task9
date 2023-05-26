@@ -54,4 +54,14 @@ public class StudentsController : Controller
         
         return RedirectToAction("Index");
     }
+
+    [HttpPost]
+    public IActionResult Delete(int studentId)
+    {
+        var student = _studentService.GetAll().FirstOrDefault(x => x.Id == studentId);
+        
+        _studentService.Delete(student!);
+
+        return RedirectToAction("Index");
+    }
 }

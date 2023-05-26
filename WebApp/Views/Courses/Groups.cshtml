@@ -24,9 +24,14 @@
             <td>@group.Name</td>
             <td>@group.Course!.Name</td>
             <td>
-                <a class="btn btn-primary" asp-controller="Groups" asp-action="Students" asp-route-groupId="@group.Id">Students</a>
-                <a class="btn btn-primary" asp-controller="Groups" asp-action="Edit" asp-route-groupId="@group.Id">Edit</a>
-                <button type="button" class="btn btn-danger">Delete</button>
+                <div class="d-flex flex-row">
+                    <a class="btn btn-primary" asp-controller="Groups" asp-action="Students" asp-route-groupId="@group.Id">Students</a>
+                    <a class="btn btn-primary mx-2" asp-controller="Groups" asp-action="Edit" asp-route-groupId="@group.Id">Edit</a>
+                    @using (Html.BeginForm("Delete", "Groups", new { groupId = group.Id }))
+                    {
+                        <button type="button" class="btn btn-danger">Delete</button>
+                    }
+                </div>
             </td>
         </tr>
     }

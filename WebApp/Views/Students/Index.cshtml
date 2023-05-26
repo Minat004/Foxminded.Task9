@@ -26,8 +26,13 @@
             <td>@student.LastName</td>
             <td>@student.Group!.Name</td>
             <td>
-                <a class="btn btn-primary" asp-controller="Students" asp-action="Edit" asp-route-studentId="@student.Id">Edit</a>
-                <button type="button" class="btn btn-danger">Delete</button>
+                <div class="d-flex flex-row">
+                    <a class="btn btn-primary mx-2" asp-controller="Students" asp-action="Edit" asp-route-studentId="@student.Id">Edit</a>
+                    @using (Html.BeginForm("Delete", "Students", new { studentId = student.Id }))
+                    {
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    }
+                </div>
             </td>
         </tr>
     }

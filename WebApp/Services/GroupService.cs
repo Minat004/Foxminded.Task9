@@ -36,11 +36,6 @@ public class GroupService : IService<Group, Student>
 
     public void Delete(Group group)
     {
-        if (group.Students.Count != 0)
-        {
-            return;
-        }
-        
         _repository.Delete(group);
     }
 }

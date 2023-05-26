@@ -70,4 +70,17 @@ public class GroupsController : Controller
         
         return RedirectToAction("Index");
     }
+
+    [HttpPost]
+    public IActionResult Delete(int groupId)
+    {
+        var group = _groupService.GetAll().FirstOrDefault(x => x.Id == groupId);
+
+        if (group!.Students.Count == 0)
+        {
+            _groupService.Delete(group);
+        }
+
+        return RedirectToAction("Index");
+    }
 }
