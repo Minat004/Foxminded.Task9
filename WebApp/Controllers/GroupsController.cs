@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -22,7 +21,6 @@ public class GroupsController : Controller
         return View(_groups);
     }
 
-    [Route("[controller]/{groupId:int}")]
     public IActionResult Students(int groupId)
     {
         var students = _groupService.GetCollection(groupId).ToList();

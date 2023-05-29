@@ -18,7 +18,6 @@ public class CoursesController : Controller
         return View(_courses);
     }
 
-    [Route("[controller]/{courseId:int}")]
     public IActionResult Groups(int courseId)
     {
         var groups = _service.GetCollection(courseId).ToList();
