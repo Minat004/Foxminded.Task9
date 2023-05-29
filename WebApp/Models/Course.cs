@@ -1,4 +1,6 @@
-﻿namespace WebApp.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApp.Models;
 
 public partial class Course
 {

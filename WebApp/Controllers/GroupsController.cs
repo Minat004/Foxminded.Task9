@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -37,7 +38,6 @@ public class GroupsController : Controller
         return View(students);
     }
     
-    [Route("[controller]/{groupId:int}/[action]")]
     public IActionResult Edit(int groupId)
     {
         var group = _groups.FirstOrDefault(x => x.Id == groupId);
@@ -46,14 +46,17 @@ public class GroupsController : Controller
     }
     
     [HttpPost]
-    public IActionResult EditGroup(Group group)
+    public IActionResult Edit(Group group)
     {
-        _groupService.Update(group);
+        if (ModelState.IsValid)
+        {
+            _groupService.Update(group);
+            return RedirectToAction("Index");
+        }
 
-        return RedirectToAction("Index");
+        return View(group);
     }
     
-    [Route("[controller]/[action]")]
     public IActionResult Add()
     {
         var group = new Group
@@ -64,11 +67,15 @@ public class GroupsController : Controller
     }
 
     [HttpPost]
-    public IActionResult AddGroup(Group group)
+    public IActionResult Add(Group group)
     {
-        _groupService.Add(group);
-        
-        return RedirectToAction("Index");
+        if (ModelState.IsValid)
+        {
+            _groupService.Add(group);
+            return RedirectToAction("Index");
+        }
+
+        return View(group);
     }
 
     [HttpPost]

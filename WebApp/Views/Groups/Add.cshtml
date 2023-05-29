@@ -9,11 +9,13 @@
     
     <h2>Add new group</h2>
 
-    <form method="post" asp-controller="Groups" asp-action="AddGroup">
+    <form method="post" asp-controller="Groups" asp-action="Add">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group row mb-2">
             <label asp-for="Name" class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-10">
                 <input asp-for="Name" class="form-control" type="text"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row mb-2">
@@ -29,3 +31,7 @@
     </form>
     
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

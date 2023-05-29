@@ -21,7 +21,6 @@ public class StudentsController : Controller
         return View(_students);
     }
     
-    [Route("[controller]/{studentId:int}/[action]")]
     public IActionResult Edit(int studentId)
     {
         var student = _students.FirstOrDefault(x => x.Id == studentId);
@@ -30,14 +29,17 @@ public class StudentsController : Controller
     }
     
     [HttpPost]
-    public IActionResult EditStudent(Student student)
+    public IActionResult Edit(Student student)
     {
-        _studentService.Update(student);
+        if (ModelState.IsValid)
+        {
+            _studentService.Update(student);
+            return RedirectToAction("Index");
+        }
 
-        return RedirectToAction("Index");
+        return View(student);
     }
     
-    [Route("[controller]/[action]")]
     public IActionResult Add()
     {
         var student = new Student
@@ -48,11 +50,15 @@ public class StudentsController : Controller
     }
 
     [HttpPost]
-    public IActionResult AddStudent(Student student)
+    public IActionResult Add(Student student)
     {
-        _studentService.Add(student);
-        
-        return RedirectToAction("Index");
+        if (ModelState.IsValid)
+        {
+            _studentService.Add(student);
+            return RedirectToAction("Index");
+        }
+
+        return View(student);
     }
 
     [HttpPost]
