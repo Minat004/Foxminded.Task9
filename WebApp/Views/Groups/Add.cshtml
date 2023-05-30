@@ -25,7 +25,10 @@
             </div>
         </div>
         <div class="d-flex flex-row-reverse">
-            <a class="btn btn-outline-danger" asp-controller="" asp-action="">Cancel</a>
+            @if (!string.IsNullOrEmpty(ViewData["Referer"]!.ToString()))
+            {
+                <a class="btn btn-outline-danger" href="@ViewData["Referer"]">Cancel</a>
+            }
             <button type="submit" class="btn btn-primary mx-2">Save</button>
         </div>
     </form>

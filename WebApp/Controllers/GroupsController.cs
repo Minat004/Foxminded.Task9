@@ -38,6 +38,11 @@ public class GroupsController : Controller
     
     public IActionResult Edit(int groupId)
     {
+        if (!string.IsNullOrEmpty(Request.Headers["Referer"].ToString()))
+        {
+            ViewData["Referer"] = Request.Headers["Referer"].ToString();
+        }
+
         var group = _groups.FirstOrDefault(x => x.Id == groupId);
         
         return View(group);
@@ -58,6 +63,11 @@ public class GroupsController : Controller
     
     public IActionResult Add()
     {
+        if (!string.IsNullOrEmpty(Request.Headers["Referer"].ToString()))
+        {
+            ViewData["Referer"] = Request.Headers["Referer"].ToString();
+        }
+        
         var group = new Group
         {
             Courses = new SelectList(_courseService.GetAll(), "Id", "Name")

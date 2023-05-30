@@ -23,6 +23,11 @@ public class StudentsController : Controller
     
     public IActionResult Edit(int studentId)
     {
+        if (!string.IsNullOrEmpty(Request.Headers["Referer"].ToString()))
+        {
+            ViewData["Referer"] = Request.Headers["Referer"].ToString();
+        }
+        
         var student = _students.FirstOrDefault(x => x.Id == studentId);
         
         return View(student);
@@ -43,6 +48,11 @@ public class StudentsController : Controller
     
     public IActionResult Add()
     {
+        if (!string.IsNullOrEmpty(Request.Headers["Referer"].ToString()))
+        {
+            ViewData["Referer"] = Request.Headers["Referer"].ToString();
+        }
+        
         var student = new Student
         {
             Groups = new SelectList(_groupService.GetAll(), "Id", "Name")
