@@ -37,7 +37,8 @@ public class StudentsController : Controller
             return RedirectToAction("Index");
         }
 
-        return View(student);
+        return BadRequest();
+        // return View(student);
     }
     
     public IActionResult Add()
@@ -46,6 +47,7 @@ public class StudentsController : Controller
         {
             Groups = new SelectList(_groupService.GetAll(), "Id", "Name")
         };
+        
         return View(student);
     }
 
@@ -57,16 +59,15 @@ public class StudentsController : Controller
             _studentService.Add(student);
             return RedirectToAction("Index");
         }
-
-        return View(student);
+        
+        return BadRequest();
+        // return View(student);
     }
 
     [HttpPost]
-    public IActionResult Delete(int studentId)
+    public IActionResult Delete(Student student)
     {
-        var student = _studentService.GetAll().FirstOrDefault(x => x.Id == studentId);
-        
-        _studentService.Delete(student!);
+        _studentService.Delete(student);
 
         return RedirectToAction("Index");
     }

@@ -52,7 +52,8 @@ public class GroupsController : Controller
             return RedirectToAction("Index");
         }
 
-        return View(group);
+        return BadRequest();
+        // return View(group);
     }
     
     public IActionResult Add()
@@ -72,16 +73,15 @@ public class GroupsController : Controller
             _groupService.Add(group);
             return RedirectToAction("Index");
         }
-
-        return View(group);
+        
+        return BadRequest();
+        // return View(group);
     }
 
     [HttpPost]
-    public IActionResult Delete(int groupId)
+    public IActionResult Delete(Group group)
     {
-        var group = _groupService.GetAll().FirstOrDefault(x => x.Id == groupId);
-
-        if (group!.Students.Count == 0)
+        if (group.Students.Count == 0)
         {
             _groupService.Delete(group);
         }
