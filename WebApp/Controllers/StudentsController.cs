@@ -43,7 +43,6 @@ public class StudentsController : Controller
         }
 
         return BadRequest();
-        // return View(student);
     }
     
     public IActionResult Add()
@@ -71,7 +70,6 @@ public class StudentsController : Controller
         }
         
         return BadRequest();
-        // return View(student);
     }
 
     [HttpPost]

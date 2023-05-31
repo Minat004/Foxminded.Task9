@@ -23,16 +23,10 @@ public class GroupsController : Controller
 
     public IActionResult Students(int groupId)
     {
+        ViewData["GroupName"] = _groupService.GetAll().FirstOrDefault(x => x.Id == groupId)!.Name;
+        
         var students = _groupService.GetCollection(groupId).ToList();
-        
-        if (students.Count == 0)
-        {
-            students.Add(new Student()
-            {
-                Group = _groups.FirstOrDefault(x => x.Id == groupId)
-            });
-        }
-        
+
         return View(students);
     }
     
@@ -58,7 +52,6 @@ public class GroupsController : Controller
         }
 
         return BadRequest();
-        // return View(group);
     }
     
     public IActionResult Add()
@@ -85,7 +78,6 @@ public class GroupsController : Controller
         }
         
         return BadRequest();
-        // return View(group);
     }
 
     [HttpPost]
