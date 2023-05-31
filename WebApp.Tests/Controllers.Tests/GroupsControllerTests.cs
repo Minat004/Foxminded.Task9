@@ -9,25 +9,28 @@ namespace WebApp.Tests.Controllers.Tests;
 public class GroupsControllerTests
 {
     private readonly Mock<IService<Group, Student>> _mockGroupService;
-    private readonly Mock<IReadable<Course>> _mockCourseService;
+    private readonly Mock<IReadable<Course, Group>> _mockCourseService;
+    private readonly Mock<ICancelable> _mockCancelService;
 
     public GroupsControllerTests()
     {
         // Arrange
         _mockGroupService = new Mock<IService<Group, Student>>();
-        _mockGroupService.Setup(x => x.GetAll())
+        _mockGroupService.Setup(x => x.GetAllAsync().Result)
             .Returns(MockDataHelper.GetGroups);
 
-        _mockCourseService = new Mock<IReadable<Course>>();
-        _mockCourseService.Setup(x => x.GetAll())
+        _mockCourseService = new Mock<IReadable<Course, Group>>();
+        _mockCourseService.Setup(x => x.GetAllAsync().Result)
             .Returns(MockDataHelper.GetCourses);
+
+        _mockCancelService = new Mock<ICancelable>();
     }
 
     [Fact]
     public void IndexTest()
     {
         // Arrange
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
         
         // Act
         var result = controller.Index();
@@ -48,10 +51,10 @@ public class GroupsControllerTests
     public void StudentsTest(int count, int groupId)
     {
         // Arrange
-        _mockGroupService.Setup(x => x.GetCollection(It.IsAny<int>()))
-            .Returns<int>(MockDataHelper.GetStudentsOfGroupById);
+        _mockGroupService.Setup(x => x.GetCollectionAsync(It.IsAny<int>()).Result)
+            .Returns(MockDataHelper.GetStudentsOfGroupById);
         
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
         
         // Act
         var result = controller.Students(groupId);
@@ -81,7 +84,7 @@ public class GroupsControllerTests
     public void EditGetTest(int groupId)
     {
         // Arrange
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
         
         // Act
         var result = controller.Edit(groupId);
@@ -96,7 +99,7 @@ public class GroupsControllerTests
     public void EditPostModelStateIsValidTest()
     {
         // Arrange
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
 
         // Act
         var result = controller.Edit(It.IsAny<Group>());
@@ -105,14 +108,14 @@ public class GroupsControllerTests
         var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Null(redirectToActionResult.ControllerName);
         Assert.Equal("Index", redirectToActionResult.ActionName);
-        _mockGroupService.Verify(x => x.Update(It.IsAny<Group>()), Times.Once);
+        _mockGroupService.Verify(x => x.UpdateAsync(It.IsAny<Group>()), Times.Once);
     }
     
     [Fact]
     public void EditPostNotModelStateIsValidTest()
     {
         // Arrange
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
         controller.ModelState.AddModelError("Name", "Required");
 
         // Act
@@ -127,7 +130,7 @@ public class GroupsControllerTests
     public void AddGetTest()
     {
         // Arrange
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
         
         // Act
         var result = controller.Add();
@@ -142,7 +145,7 @@ public class GroupsControllerTests
     public void AddPostModelStateIsValidTest()
     {
         // Arrange
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
         
         // Act
         var result = controller.Add(It.IsAny<Group>());
@@ -151,14 +154,14 @@ public class GroupsControllerTests
         var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Null(redirectToActionResult.ControllerName);
         Assert.Equal("Index", redirectToActionResult.ActionName);
-        _mockGroupService.Verify(x => x.Add(It.IsAny<Group>()), Times.Once);
+        _mockGroupService.Verify(x => x.AddAsync(It.IsAny<Group>()), Times.Once);
     }
 
     [Fact]
     public void AddPostNotModelStateIsValidTest()
     {
         // Arrange
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
         controller.ModelState.AddModelError("Name", "Required");
 
         // Act
@@ -173,7 +176,7 @@ public class GroupsControllerTests
     public void DeletePostEmptyGroupTest()
     {
         // Arrange
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
 
         var group = new Group()
         {
@@ -188,14 +191,14 @@ public class GroupsControllerTests
         var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Null(redirectToActionResult.ControllerName);
         Assert.Equal("Index", redirectToActionResult.ActionName);
-        _mockGroupService.Verify(x => x.Delete(group), Times.Once);
+        _mockGroupService.Verify(x => x.DeleteAsync(group), Times.Once);
     }
 
     [Fact]
     public void DeletePostNotEmptyGroupTest()
     {
         // Arrange
-        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object);
+        var controller = new GroupsController(_mockGroupService.Object, _mockCourseService.Object, _mockCancelService.Object);
         var group = new Group()
         {
             Id = It.IsAny<int>(),
@@ -209,6 +212,6 @@ public class GroupsControllerTests
         var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Null(redirectToActionResult.ControllerName);
         Assert.Equal("Index", redirectToActionResult.ActionName);
-        _mockGroupService.Verify(x => x.Delete(group), Times.Never);
+        _mockGroupService.Verify(x => x.DeleteAsync(group), Times.Never);
     }
 }

@@ -13,10 +13,10 @@ public class CoursesControllerTests
     {
         // Arrange
         var mockService = new Mock<IReadable<Course, Group>>();
-        mockService.Setup(x => x.GetAll())
+        mockService.Setup(x => x.GetAllAsync().Result)
             .Returns(MockDataHelper.GetCourses);
-        mockService.Setup(x => x.GetCollection(It.IsAny<int>()))
-            .Returns<int>(MockDataHelper.GetGroupsOfCourseById);
+        mockService.Setup(x => x.GetCollectionAsync(It.IsAny<int>()).Result)
+            .Returns(MockDataHelper.GetGroupsOfCourseById);
         
         _controller = new CoursesController(mockService.Object);
     }

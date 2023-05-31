@@ -2,22 +2,20 @@
 
 public class CourseService : IReadable<Course, Group>
 {
-    private readonly IReadable<Course> _repository;
+    private readonly UniversityDbContext _context;
 
-    public CourseService(IReadable<Course> repository)
+    public CourseService(UniversityDbContext context)
     {
-        _repository = repository;
+        _context = context;
     }
-
-    public IEnumerable<Course> GetAll() => _repository.GetAll();
     
-    public Task<IEnumerable<Course>> GetAllAsync()
+    public async Task<IEnumerable<Course>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await _context.Courses!.ToListAsync();
     }
 
-    public IEnumerable<Group> GetCollection(int id)
+    public async Task<IEnumerable<Group>> GetCollectionAsync(int id)
     {
-        return _repository.GetAll().FirstOrDefault(x => x.Id == id)!.Groups;
+        return await _context.Groups!.Where(x => x.CourseId == id).ToListAsync();
     }
 }

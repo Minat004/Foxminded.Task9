@@ -2,36 +2,45 @@
 
 public class StudentService : IService<Student>
 {
-    private readonly IRepository<Student> _repository;
+    private readonly UniversityDbContext _context;
 
-    public StudentService(IRepository<Student> repository)
+    public StudentService(UniversityDbContext context)
     {
-        _repository = repository;
+        _context = context;
     }
 
-    public IEnumerable<Student> GetAll() => _repository.GetAll();
-    
-    public Task<IEnumerable<Student>> GetAllAsync()
+    public async Task<IEnumerable<Student>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var students = await _context.Students!.ToListAsync();
+        var groups = await _context.Groups!.ToListAsync();
+
+        students.ForEach(student =>
+        {
+            student.Group = groups.FirstOrDefault(group => group.Id == student.GroupId);
+        });
+        
+        return students;
     }
 
-    public void Update(Student student)
+    public async Task UpdateAsync(Student student)
     {
-        var newStudent = _repository.GetAll().FirstOrDefault(x => x.Id == student.Id);
+        var newStudent = _context.Students!.FirstOrDefault(x => x.Id == student.Id);
         newStudent!.FirstName = student.FirstName;
         newStudent.LastName = student.LastName;
         
-        _repository.Update(newStudent);
+        _context.Update(newStudent);
+        await _context.SaveChangesAsync();
     }
 
-    public void Add(Student student)
+    public async Task AddAsync(Student student)
     {
-        _repository.Add(student);
+        _context.Add(student);
+        await _context.SaveChangesAsync();
     }
 
-    public void Delete(Student student)
+    public async Task DeleteAsync(Student student)
     {
-        _repository.Delete(student);
+        _context.Remove(student);
+        await _context.SaveChangesAsync();
     }
 }

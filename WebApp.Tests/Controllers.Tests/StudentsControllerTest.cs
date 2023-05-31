@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using WebApp.Controllers;
 using WebApp.Interfaces;
@@ -10,27 +12,27 @@ public class StudentsControllerTest
 {
     private readonly Mock<IService<Student>> _mockStudentService;
     private readonly Mock<IService<Group, Student>> _mockGroupService;
+    private readonly Mock<ICancelable> _mockCancelService;
 
     public StudentsControllerTest()
     {
         // Arrange
         _mockStudentService = new Mock<IService<Student>>();
-        _mockStudentService.Setup(x => x.GetAll())
+        _mockStudentService.Setup(x => x.GetAllAsync().Result)
             .Returns(MockDataHelper.GetStudents);
 
         _mockGroupService = new Mock<IService<Group, Student>>();
-        _mockGroupService.Setup(x => x.GetAll())
+        _mockGroupService.Setup(x => x.GetAllAsync().Result)
             .Returns(MockDataHelper.GetGroups);
+        
+        _mockCancelService = new Mock<ICancelable>();
     }
 
     [Fact]
     public void IndexTest()
     {
         // Arrange
-        _mockStudentService.Setup(x => x.GetAll())
-            .Returns(MockDataHelper.GetStudents());
-        
-        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object);
+        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object, _mockCancelService.Object);
         
         // Act
         var result = controller.Index();
@@ -65,7 +67,7 @@ public class StudentsControllerTest
     public void EditGetTest(int studentId)
     {
         // Arrange
-        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object);
+        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object, _mockCancelService.Object);
         
         // Act
         var result = controller.Edit(studentId);
@@ -74,13 +76,14 @@ public class StudentsControllerTest
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsAssignableFrom<Student>(viewResult.ViewData.Model);
         Assert.Equal(studentId, model.Id);
+        _mockCancelService.Verify(x => x.ViewDataReferer(It.IsAny<ViewDataDictionary>(), It.IsAny<HttpRequest>()), Times.Once);
     }
     
     [Fact]
     public void EditPostModelStateIsValidTest()
     {
         // Arrange
-        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object);
+        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object, _mockCancelService.Object);
 
         // Act
         var result = controller.Edit(It.IsAny<Student>());
@@ -89,14 +92,14 @@ public class StudentsControllerTest
         var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Null(redirectToActionResult.ControllerName);
         Assert.Equal("Index", redirectToActionResult.ActionName);
-        _mockStudentService.Verify(x => x.Update(It.IsAny<Student>()), Times.Once);
+        _mockStudentService.Verify(x => x.UpdateAsync(It.IsAny<Student>()), Times.Once);
     }
     
     [Fact]
     public void EditPostNotModelStateIsValidTest()
     {
         // Arrange
-        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object);
+        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object, _mockCancelService.Object);
         controller.ModelState.AddModelError("Name", "Required");
 
         // Act
@@ -111,7 +114,7 @@ public class StudentsControllerTest
     public void AddGetTest()
     {
         // Arrange
-        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object);
+        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object, _mockCancelService.Object);
         
         // Act
         var result = controller.Add();
@@ -120,13 +123,14 @@ public class StudentsControllerTest
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsAssignableFrom<Student>(viewResult.ViewData.Model);
         Assert.IsAssignableFrom<Student>(model);
+        _mockCancelService.Verify(x => x.ViewDataReferer(It.IsAny<ViewDataDictionary>(), It.IsAny<HttpRequest>()), Times.Once);
     }
 
     [Fact]
     public void AddPostModelStateIsValidTest()
     {
         // Arrange
-        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object);
+        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object, _mockCancelService.Object);
         
         // Act
         var result = controller.Add(It.IsAny<Student>());
@@ -135,14 +139,14 @@ public class StudentsControllerTest
         var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Null(redirectToActionResult.ControllerName);
         Assert.Equal("Index", redirectToActionResult.ActionName);
-        _mockStudentService.Verify(x => x.Add(It.IsAny<Student>()), Times.Once);
+        _mockStudentService.Verify(x => x.AddAsync(It.IsAny<Student>()), Times.Once);
     }
 
     [Fact]
     public void AddPostNotModelStateIsValidTest()
     {
         // Arrange
-        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object);
+        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object, _mockCancelService.Object);
         controller.ModelState.AddModelError("FirstName", "Required");
         controller.ModelState.AddModelError("LastName", "Required");
 
@@ -158,7 +162,7 @@ public class StudentsControllerTest
     public void DeletePostTest()
     {
         // Arrange
-        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object);
+        var controller = new StudentsController(_mockStudentService.Object, _mockGroupService.Object, _mockCancelService.Object);
 
         // Act
         var result = controller.Delete(It.IsAny<Student>());
@@ -167,6 +171,6 @@ public class StudentsControllerTest
         var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Null(redirectToActionResult.ControllerName);
         Assert.Equal("Index", redirectToActionResult.ActionName);
-        _mockStudentService.Verify(x => x.Delete(It.IsAny<Student>()), Times.Once);
+        _mockStudentService.Verify(x => x.DeleteAsync(It.IsAny<Student>()), Times.Once);
     }
 }

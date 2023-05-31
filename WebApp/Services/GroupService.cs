@@ -2,40 +2,49 @@
 
 public class GroupService : IService<Group, Student>
 {
-    private readonly IRepository<Group> _repository;
+    private readonly UniversityDbContext _context;
 
-    public GroupService(IRepository<Group> repository)
+    public GroupService(UniversityDbContext context)
     {
-        _repository = repository;
+        _context = context;
     }
-
-    public IEnumerable<Group> GetAll() => _repository.GetAll();
     
-    public Task<IEnumerable<Group>> GetAllAsync()
+    public async Task<IEnumerable<Group>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var groups = await _context.Groups!.ToListAsync();
+        var courses = await _context.Courses!.ToListAsync();
+        
+        groups.ForEach(group =>
+        {
+            group.Course = courses.FirstOrDefault(course => course.Id == group.CourseId);
+        });
+        
+        return groups;
     }
 
-    public IEnumerable<Student> GetCollection(int id)
+    public async Task<IEnumerable<Student>> GetCollectionAsync(int id)
     {
-        return _repository.GetAll().FirstOrDefault(x => x.Id == id)!.Students;
+        return await _context.Students!.Where(x => x.GroupId == id).ToListAsync();
     }
 
-    public void Update(Group group)
+    public async Task UpdateAsync(Group group)
     {
-        var newGroup = _repository.GetAll().FirstOrDefault(x => x.Id == group.Id);
+        var newGroup = _context.Groups!.FirstOrDefault(x => x.Id == group.Id);
         newGroup!.Name = group.Name;
         
-        _repository.Update(newGroup);
+        _context.Update(newGroup);
+        await _context.SaveChangesAsync();
     }
 
-    public void Add(Group group)
+    public async Task AddAsync(Group group)
     {
-        _repository.Add(group);
+        _context.Add(group);
+        await _context.SaveChangesAsync();
     }
 
-    public void Delete(Group group)
+    public async Task DeleteAsync(Group group)
     {
-        _repository.Delete(group);
+        _context.Remove(group);
+        await _context.SaveChangesAsync();
     }
 }

@@ -10,7 +10,7 @@ public class CoursesController : Controller
     public CoursesController(IReadable<Course, Group> service)
     {
         _service = service;
-        _courses = service.GetAll().ToList()!;
+        _courses = new List<Course?>(service.GetAllAsync().Result);
     }
 
     public IActionResult Index()
@@ -20,11 +20,11 @@ public class CoursesController : Controller
 
     public IActionResult Groups(int courseId)
     {
-        var groups = _service.GetCollection(courseId).ToList();
+        var groups = _service.GetCollectionAsync(courseId).Result.ToList();
 
         if (groups.Count == 0)
         {
-            groups.Add(new Group()
+            groups.Add(new Group
             {
                 Course = _courses.FirstOrDefault(x => x!.Id == courseId)
             });

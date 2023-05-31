@@ -7,13 +7,18 @@ public class StudentsController : Controller
 {
     private readonly IService<Student> _studentService;
     private readonly IService<Group, Student> _groupService;
+    private readonly ICancelable _cancelService;
     private readonly List<Student> _students;
 
-    public StudentsController(IService<Student> studentService, IService<Group, Student> groupService)
+    public StudentsController(
+        IService<Student> studentService,
+        IService<Group, Student> groupService,
+        ICancelable cancelService)
     {
         _studentService = studentService;
         _groupService = groupService;
-        _students = studentService.GetAll().ToList();
+        _cancelService = cancelService;
+        _students = new List<Student>(studentService.GetAllAsync().Result);
     }
 
     public IActionResult Index()
@@ -23,10 +28,7 @@ public class StudentsController : Controller
     
     public IActionResult Edit(int studentId)
     {
-        if (!string.IsNullOrEmpty(Request.Headers["Referer"].ToString()))
-        {
-            ViewData["Referer"] = Request.Headers["Referer"].ToString();
-        }
+        _cancelService.ViewDataReferer(ViewData, Request);
         
         var student = _students.FirstOrDefault(x => x.Id == studentId);
         
@@ -38,7 +40,7 @@ public class StudentsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _studentService.Update(student);
+            _studentService.UpdateAsync(student);
             return RedirectToAction("Index");
         }
 
@@ -47,14 +49,11 @@ public class StudentsController : Controller
     
     public IActionResult Add()
     {
-        if (!string.IsNullOrEmpty(Request.Headers["Referer"].ToString()))
-        {
-            ViewData["Referer"] = Request.Headers["Referer"].ToString();
-        }
+        _cancelService.ViewDataReferer(ViewData, Request);
         
         var student = new Student
         {
-            Groups = new SelectList(_groupService.GetAll(), "Id", "Name")
+            Groups = new SelectList(_groupService.GetAllAsync().Result, "Id", "Name")
         };
         
         return View(student);
@@ -65,7 +64,7 @@ public class StudentsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _studentService.Add(student);
+            _studentService.AddAsync(student);
             return RedirectToAction("Index");
         }
         
@@ -75,7 +74,7 @@ public class StudentsController : Controller
     [HttpPost]
     public IActionResult Delete(Student student)
     {
-        _studentService.Delete(student);
+        _studentService.DeleteAsync(student);
 
         return RedirectToAction("Index");
     }

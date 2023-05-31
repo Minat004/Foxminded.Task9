@@ -6,14 +6,19 @@ namespace WebApp.Controllers;
 public class GroupsController : Controller
 {
     private readonly IService<Group, Student> _groupService;
-    private readonly IReadable<Course> _courseService;
+    private readonly IReadable<Course, Group> _courseService;
+    private readonly ICancelable _cancelService;
     private readonly List<Group> _groups;
 
-    public GroupsController(IService<Group, Student> groupService, IReadable<Course> courseService)
+    public GroupsController(
+        IService<Group, Student> groupService,
+        IReadable<Course, Group> courseService,
+        ICancelable cancelService)
     {
         _groupService = groupService;
         _courseService = courseService;
-        _groups = groupService.GetAll().ToList();
+        _cancelService = cancelService;
+        _groups = new List<Group>(groupService.GetAllAsync().Result);
     }
 
     public IActionResult Index()
@@ -23,19 +28,16 @@ public class GroupsController : Controller
 
     public IActionResult Students(int groupId)
     {
-        ViewData["GroupName"] = _groupService.GetAll().FirstOrDefault(x => x.Id == groupId)!.Name;
+        ViewData["GroupName"] = _groupService.GetAllAsync().Result.FirstOrDefault(x => x.Id == groupId)!.Name;
         
-        var students = _groupService.GetCollection(groupId).ToList();
+        var students = _groupService.GetCollectionAsync(groupId).Result.ToList();
 
         return View(students);
     }
     
     public IActionResult Edit(int groupId)
     {
-        if (!string.IsNullOrEmpty(Request.Headers["Referer"].ToString()))
-        {
-            ViewData["Referer"] = Request.Headers["Referer"].ToString();
-        }
+        _cancelService.ViewDataReferer(ViewData, Request);
 
         var group = _groups.FirstOrDefault(x => x.Id == groupId);
         
@@ -47,7 +49,7 @@ public class GroupsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _groupService.Update(group);
+            _groupService.UpdateAsync(group);
             return RedirectToAction("Index");
         }
 
@@ -56,14 +58,11 @@ public class GroupsController : Controller
     
     public IActionResult Add()
     {
-        if (!string.IsNullOrEmpty(Request.Headers["Referer"].ToString()))
-        {
-            ViewData["Referer"] = Request.Headers["Referer"].ToString();
-        }
+        _cancelService.ViewDataReferer(ViewData, Request);
         
         var group = new Group
         {
-            Courses = new SelectList(_courseService.GetAll(), "Id", "Name")
+            Courses = new SelectList(_courseService.GetAllAsync().Result, "Id", "Name")
         };
         return View(group);
     }
@@ -73,7 +72,7 @@ public class GroupsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _groupService.Add(group);
+            _groupService.AddAsync(group);
             return RedirectToAction("Index");
         }
         
@@ -85,7 +84,7 @@ public class GroupsController : Controller
     {
         if (group.Students.Count == 0)
         {
-            _groupService.Delete(group);
+            _groupService.DeleteAsync(group);
         }
 
         return RedirectToAction("Index");

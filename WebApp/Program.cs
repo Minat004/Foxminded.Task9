@@ -2,7 +2,6 @@ global using Microsoft.EntityFrameworkCore;
 global using WebApp.Data;
 global using WebApp.Interfaces;
 global using WebApp.Models;
-global using WebApp.Repositories;
 global using WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,14 +11,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<UniversityDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("UniversityConnection")));
 
-builder.Services.AddScoped<IReadable<Course>, CourseRepository>();
 builder.Services.AddScoped<IReadable<Course, Group>, CourseService>();
-
-builder.Services.AddScoped<IRepository<Group>, GroupRepository>();
 builder.Services.AddScoped<IService<Group, Student>, GroupService>();
-
-builder.Services.AddScoped<IRepository<Student>, StudentRepository>();
 builder.Services.AddScoped<IService<Student>, StudentService>();
+builder.Services.AddScoped<ICancelable, CancelService>();
 
 var app = builder.Build();
 

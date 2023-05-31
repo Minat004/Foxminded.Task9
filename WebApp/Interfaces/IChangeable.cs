@@ -2,9 +2,9 @@
 
 public interface IChangeable<in T>
 {
-    public void Update(T group);
+    public Task UpdateAsync(T group);
     
-    public void Add(T item);
+    public Task AddAsync(T item);
     
-    public void Delete(T item);
+    public Task DeleteAsync(T item);
 }

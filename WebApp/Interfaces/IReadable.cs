@@ -2,12 +2,10 @@
 
 public interface IReadable<T>
 {
-    public IEnumerable<T> GetAll();
-    
     public Task<IEnumerable<T>> GetAllAsync();
 }
 
-public interface IReadable<U, out V> : IReadable<U>
+public interface IReadable<U, V> : IReadable<U>
 {
-    public IEnumerable<V> GetCollection(int id);
+    public Task<IEnumerable<V>> GetCollectionAsync(int id);
 }
