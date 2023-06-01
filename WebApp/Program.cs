@@ -11,8 +11,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<UniversityDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("UniversityConnection")));
 
-builder.Services.AddScoped<IReadable<Course, Group>, CourseService>();
-builder.Services.AddScoped<IService<Group, Student>, GroupService>();
+builder.Services.AddScoped<ICourseService<Course>, CourseService>();
+builder.Services.AddScoped<IGroupService<Group>, GroupService>();
 builder.Services.AddScoped<IService<Student>, StudentService>();
 builder.Services.AddScoped<ICancelable, CancelService>();
 

@@ -8,24 +8,24 @@ namespace WebApp.Tests.Controllers.Tests;
 
 public class CoursesControllerTests
 {
-    private readonly CoursesController _controller;
+    private readonly Mock<ICourseService<Course>> _mockCourseService;
+    
     public CoursesControllerTests()
     {
         // Arrange
-        var mockService = new Mock<IReadable<Course, Group>>();
-        mockService.Setup(x => x.GetAllAsync().Result)
-            .Returns(MockDataHelper.GetCourses);
-        mockService.Setup(x => x.GetCollectionAsync(It.IsAny<int>()).Result)
-            .Returns(MockDataHelper.GetGroupsOfCourseById);
-        
-        _controller = new CoursesController(mockService.Object);
+        _mockCourseService = new Mock<ICourseService<Course>>();
+        _mockCourseService.Setup(x => x.GetAllAsync())
+            .ReturnsAsync(MockDataHelper.GetCourses);
     }
 
     [Fact]
-    public void IndexTest()
+    public async Task IndexAsyncTest()
     {
+        // Arrange
+        var controller = new CoursesController(_mockCourseService.Object);
+        
         // Act
-        var result = _controller.Index();
+        var result = await controller.IndexAsync();
         
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -39,10 +39,16 @@ public class CoursesControllerTests
     [InlineData(3, 3)]
     [InlineData(3, 4)]
     [InlineData(3, 5)]
-    public void GroupsTest(int count, int courseId)
+    public async Task GroupsAsyncTest(int count, int courseId)
     {
+        // Arrange
+        _mockCourseService.Setup(x => x.GetCourseGroupsAsync(It.IsAny<int>()))
+            .ReturnsAsync(MockDataHelper.GetGroupsOfCourseById(It.IsAny<int>()));
+        
+        var controller = new CoursesController(_mockCourseService.Object);
+        
         // Act
-        var result = _controller.Groups(courseId);
+        var result = await controller.GroupsAsync(courseId);
         
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);

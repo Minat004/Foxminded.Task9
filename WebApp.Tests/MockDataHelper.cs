@@ -144,9 +144,31 @@ public static class MockDataHelper
 
     internal static IEnumerable<Group> GetGroupsOfCourseById(int courseId)
     {
-        var groups = GetGroups();
+        var groups = new List<Group>
+        {
+            new()
+            {
+                Id = 1,
+                CourseId = 1,
+                Name = "SE-01"
+            },
+            new()
+            {
+                Id = 2,
+                CourseId = 1,
+                Name = "SE-02"
+            },
+            new()
+            {
+                Id = 3,
+                CourseId = 1,
+                Name = "SE-03"
+            }
+        };
 
-        return groups.Where(x => x.CourseId == courseId);
+        return groups;
+
+        // return GetGroups().Where(group => group.CourseId == courseId);
     }
 
     internal static IEnumerable<Student> GetStudents()
@@ -440,8 +462,54 @@ public static class MockDataHelper
     
     internal static IEnumerable<Student> GetStudentsOfGroupById(int groupId)
     {
-        var students = GetStudents();
+        var students = new List<Student>
+        {
+            new()
+            {
+                Id = 1,
+                GroupId = 1,
+                FirstName = "Tony",
+                LastName = "Stark"
+            },
+            new()
+            {
+                Id = 2,
+                GroupId = 1,
+                FirstName = "Hank",
+                LastName = "Pym"
+            },
+            new()
+            {
+                Id = 3,
+                GroupId = 1,
+                FirstName = "Janet",
+                LastName = "Pym"
+            },
+            new()
+            {
+                Id = 4,
+                GroupId = 1,
+                FirstName = "Bruce",
+                LastName = "Banner"
+            },
+            new()
+            {
+                Id = 5,
+                GroupId = 1,
+                FirstName = "Thor",
+                LastName = "Odinson"
+            },
+            new()
+            {
+                Id = 6,
+                GroupId = 1,
+                FirstName = "Rick",
+                LastName = "Jones"
+            }
+        };
+        
+        return students;
 
-        return students.Where(x => x.GroupId == groupId);
+        // return GetStudents().Where(x => x.GroupId == groupId);
     }
 }

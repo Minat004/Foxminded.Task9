@@ -11,13 +11,7 @@ public class StudentService : IService<Student>
 
     public async Task<IEnumerable<Student>> GetAllAsync()
     {
-        var students = await _context.Students!.ToListAsync();
-        var groups = await _context.Groups!.ToListAsync();
-
-        students.ForEach(student =>
-        {
-            student.Group = groups.FirstOrDefault(group => group.Id == student.GroupId);
-        });
+        var students = await _context.Students!.Include(x => x.Group).ToListAsync();
         
         return students;
     }

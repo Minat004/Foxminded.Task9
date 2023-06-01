@@ -5,7 +5,12 @@ public interface IReadable<T>
     public Task<IEnumerable<T>> GetAllAsync();
 }
 
-public interface IReadable<U, V> : IReadable<U>
+public interface ICourseReadable
 {
-    public Task<IEnumerable<V>> GetCollectionAsync(int id);
+    public Task<IEnumerable<Group>> GetCourseGroupsAsync(int courseId);
+}
+
+public interface IGroupReadable
+{
+    public Task<IEnumerable<Student>> GetGroupStudentsAsync(int groupId);
 }

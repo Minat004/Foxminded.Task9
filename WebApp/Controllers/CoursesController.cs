@@ -4,32 +4,26 @@ namespace WebApp.Controllers;
 
 public class CoursesController : Controller
 {
-    private readonly IReadable<Course, Group> _service;
-    private readonly List<Course?> _courses;
+    private readonly ICourseService<Course> _courseService;
 
-    public CoursesController(IReadable<Course, Group> service)
+    public CoursesController(ICourseService<Course> courseService)
     {
-        _service = service;
-        _courses = new List<Course?>(service.GetAllAsync().Result);
+        _courseService = courseService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> IndexAsync()
     {
-        return View(_courses);
+        var courses = await _courseService.GetAllAsync() as List<Course>;
+        return View("Index", courses);
     }
 
-    public IActionResult Groups(int courseId)
+    public async Task<IActionResult> GroupsAsync(int courseId)
     {
-        var groups = _service.GetCollectionAsync(courseId).Result.ToList();
-
-        if (groups.Count == 0)
-        {
-            groups.Add(new Group
-            {
-                Course = _courses.FirstOrDefault(x => x!.Id == courseId)
-            });
-        }
+        var courseGroups = await _courseService.GetCourseGroupsAsync(courseId) as List<Group>;
+        var courses = await _courseService.GetAllAsync();
         
-        return View(groups);
+        ViewData["CourseName"] = courses.FirstOrDefault(x => x.Id == courseId)!.Name;
+        
+        return View("Groups", courseGroups);
     }
 }

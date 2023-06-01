@@ -6,65 +6,70 @@ namespace WebApp.Controllers;
 public class StudentsController : Controller
 {
     private readonly IService<Student> _studentService;
-    private readonly IService<Group, Student> _groupService;
+    private readonly IGroupService<Group> _groupService;
     private readonly ICancelable _cancelService;
-    private readonly List<Student> _students;
 
     public StudentsController(
         IService<Student> studentService,
-        IService<Group, Student> groupService,
+        IGroupService<Group> groupService,
         ICancelable cancelService)
     {
         _studentService = studentService;
         _groupService = groupService;
         _cancelService = cancelService;
-        _students = new List<Student>(studentService.GetAllAsync().Result);
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> IndexAsync()
     {
-        return View(_students);
+        var students = await _studentService.GetAllAsync() as List<Student>;
+        return View("Index", students);
     }
     
-    public IActionResult Edit(int studentId)
+    public async Task<IActionResult> EditAsync(int studentId)
     {
         _cancelService.ViewDataReferer(ViewData, Request);
-        
-        var student = _students.FirstOrDefault(x => x.Id == studentId);
-        
-        return View(student);
+
+        var students = await _studentService.GetAllAsync();
+        var student = students.FirstOrDefault(x => x.Id == studentId);
+
+        if (student != null)
+        {
+            return View("Edit", student);
+        }
+
+        return NotFound();
     }
     
     [HttpPost]
-    public IActionResult Edit(Student student)
+    public async Task<IActionResult> EditAsync(Student student)
     {
         if (ModelState.IsValid)
         {
-            _studentService.UpdateAsync(student);
+            await _studentService.UpdateAsync(student);
             return RedirectToAction("Index");
         }
 
         return BadRequest();
     }
     
-    public IActionResult Add()
+    public async Task<IActionResult> AddAsync()
     {
         _cancelService.ViewDataReferer(ViewData, Request);
         
         var student = new Student
         {
-            Groups = new SelectList(_groupService.GetAllAsync().Result, "Id", "Name")
+            Groups = new SelectList(await _groupService.GetAllAsync(), "Id", "Name")
         };
         
-        return View(student);
+        return View("Add", student);
     }
 
     [HttpPost]
-    public IActionResult Add(Student student)
+    public async Task<IActionResult> AddAsync(Student student)
     {
         if (ModelState.IsValid)
         {
-            _studentService.AddAsync(student);
+            await _studentService.AddAsync(student);
             return RedirectToAction("Index");
         }
         
@@ -72,10 +77,9 @@ public class StudentsController : Controller
     }
 
     [HttpPost]
-    public IActionResult Delete(Student student)
+    public async Task<IActionResult> DeleteAsync(Student student)
     {
-        _studentService.DeleteAsync(student);
-
+        await _studentService.DeleteAsync(student);
         return RedirectToAction("Index");
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace WebApp.Services;
 
-public class GroupService : IService<Group, Student>
+public class GroupService : IGroupService<Group>
 {
     private readonly UniversityDbContext _context;
 
@@ -11,20 +11,14 @@ public class GroupService : IService<Group, Student>
     
     public async Task<IEnumerable<Group>> GetAllAsync()
     {
-        var groups = await _context.Groups!.ToListAsync();
-        var courses = await _context.Courses!.ToListAsync();
-        
-        groups.ForEach(group =>
-        {
-            group.Course = courses.FirstOrDefault(course => course.Id == group.CourseId);
-        });
-        
+        var groups = await _context.Groups!.Include(x => x.Course).ToListAsync();
+
         return groups;
     }
 
-    public async Task<IEnumerable<Student>> GetCollectionAsync(int id)
+    public async Task<IEnumerable<Student>> GetGroupStudentsAsync(int groupId)
     {
-        return await _context.Students!.Where(x => x.GroupId == id).ToListAsync();
+        return await _context.Students!.Where(x => x.GroupId == groupId).ToListAsync();
     }
 
     public async Task UpdateAsync(Group group)

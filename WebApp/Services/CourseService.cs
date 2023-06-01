@@ -1,6 +1,6 @@
 ﻿namespace WebApp.Services;
 
-public class CourseService : IReadable<Course, Group>
+public class CourseService : ICourseService<Course>
 {
     private readonly UniversityDbContext _context;
 
@@ -14,8 +14,8 @@ public class CourseService : IReadable<Course, Group>
         return await _context.Courses!.ToListAsync();
     }
 
-    public async Task<IEnumerable<Group>> GetCollectionAsync(int id)
+    public async Task<IEnumerable<Group>> GetCourseGroupsAsync(int courseId)
     {
-        return await _context.Groups!.Where(x => x.CourseId == id).ToListAsync();
+        return await _context.Groups!.Where(x => x.CourseId == courseId).ToListAsync();
     }
 }

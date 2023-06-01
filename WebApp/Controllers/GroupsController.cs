@@ -5,74 +5,81 @@ namespace WebApp.Controllers;
 
 public class GroupsController : Controller
 {
-    private readonly IService<Group, Student> _groupService;
-    private readonly IReadable<Course, Group> _courseService;
+    private readonly IGroupService<Group> _groupService;
+    private readonly ICourseService<Course> _courseService;
     private readonly ICancelable _cancelService;
-    private readonly List<Group> _groups;
 
     public GroupsController(
-        IService<Group, Student> groupService,
-        IReadable<Course, Group> courseService,
+        IGroupService<Group> groupService,
+        ICourseService<Course> courseService,
         ICancelable cancelService)
     {
         _groupService = groupService;
         _courseService = courseService;
         _cancelService = cancelService;
-        _groups = new List<Group>(groupService.GetAllAsync().Result);
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> IndexAsync()
     {
-        return View(_groups);
+        var groups = await _groupService.GetAllAsync() as List<Group>;
+        return View("Index", groups);
     }
 
-    public IActionResult Students(int groupId)
+    public async Task<IActionResult> StudentsAsync(int groupId)
     {
-        ViewData["GroupName"] = _groupService.GetAllAsync().Result.FirstOrDefault(x => x.Id == groupId)!.Name;
+        var groupStudents = await _groupService.GetGroupStudentsAsync(groupId) as List<Student>;
+        var groups = await _groupService.GetAllAsync();
         
-        var students = _groupService.GetCollectionAsync(groupId).Result.ToList();
+        ViewData["GroupName"] = groups.FirstOrDefault(x => x.Id == groupId)!.Name;
 
-        return View(students);
+        return View("Students", groupStudents);
     }
     
-    public IActionResult Edit(int groupId)
+    public async Task<IActionResult> EditAsync(int groupId)
     {
         _cancelService.ViewDataReferer(ViewData, Request);
 
-        var group = _groups.FirstOrDefault(x => x.Id == groupId);
+        var groups = await _groupService.GetAllAsync();
+        var group = groups.FirstOrDefault(x => x.Id == groupId);
         
-        return View(group);
+        if (group != null)
+        {
+            return View("Edit", group);
+        }
+
+        return NotFound();
     }
     
     [HttpPost]
-    public IActionResult Edit(Group group)
+    public async Task<IActionResult> EditAsync(Group group)
     {
         if (ModelState.IsValid)
         {
-            _groupService.UpdateAsync(group);
+            await _groupService.UpdateAsync(group);
             return RedirectToAction("Index");
         }
 
         return BadRequest();
     }
     
-    public IActionResult Add()
+    public async Task<IActionResult> AddAsync()
     {
         _cancelService.ViewDataReferer(ViewData, Request);
         
         var group = new Group
         {
-            Courses = new SelectList(_courseService.GetAllAsync().Result, "Id", "Name")
+            Courses = new SelectList(await _courseService.GetAllAsync(), "Id", "Name")
         };
-        return View(group);
+        
+        return View("Add", group);
     }
 
     [HttpPost]
-    public IActionResult Add(Group group)
+    public async Task<IActionResult> AddAsync(Group group)
     {
         if (ModelState.IsValid)
         {
-            _groupService.AddAsync(group);
+            await _groupService.AddAsync(group);
             return RedirectToAction("Index");
         }
         
@@ -80,11 +87,11 @@ public class GroupsController : Controller
     }
 
     [HttpPost]
-    public IActionResult Delete(Group group)
+    public async Task<IActionResult> DeleteAsync(Group group)
     {
         if (group.Students.Count == 0)
         {
-            _groupService.DeleteAsync(group);
+            await _groupService.DeleteAsync(group);
         }
 
         return RedirectToAction("Index");

@@ -1,11 +1,12 @@
 ﻿@model List<Group>
 
 @{
-    ViewBag.Title = Model[0].Course!.Name;
+    var courseName = ViewData["CourseName"]!.ToString();
+    ViewBag.Title = courseName!;
     Layout = "_Layout";
 }
 
-<h2>@Model[0].Course!.Name</h2>
+<h2>@courseName</h2>
 
 <table class="table">
     <thead>
