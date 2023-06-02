@@ -12,10 +12,12 @@ public partial class Student
 
     [Required]
     [StringLength(50)]
+    [RegularExpression(@"[a-zA-Z]+", ErrorMessage = "The field is letter only.")]
     public string FirstName { get; set; } = null!;
 
     [Required]
     [StringLength(50)]
+    [RegularExpression(@"[a-zA-Z]+", ErrorMessage = "The field is letter only.")]
     public string LastName { get; set; } = null!;
     
     [NotMapped]
