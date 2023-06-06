@@ -24,7 +24,13 @@ public class GroupService : IGroupService<Group>
     public async Task UpdateAsync(Group group)
     {
         var newGroup = _context.Groups!.FirstOrDefault(x => x.Id == group.Id);
-        newGroup!.Name = group.Name;
+
+        if (newGroup is null)
+        {
+            throw new NullReferenceException();
+        }
+        
+        newGroup.Name = group.Name;
         
         _context.Update(newGroup);
         await _context.SaveChangesAsync();

@@ -19,7 +19,13 @@ public class StudentService : IService<Student>
     public async Task UpdateAsync(Student student)
     {
         var newStudent = _context.Students!.FirstOrDefault(x => x.Id == student.Id);
-        newStudent!.FirstName = student.FirstName;
+
+        if (newStudent is null)
+        {
+            throw new NullReferenceException();
+        }
+        
+        newStudent.FirstName = student.FirstName;
         newStudent.LastName = student.LastName;
         
         _context.Update(newStudent);
