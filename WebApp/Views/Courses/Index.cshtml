@@ -1,0 +1,32 @@
+﻿@model List<Course>
+
+@{
+    ViewBag.Title = "Courses";
+    Layout = "_Layout";
+}
+
+<h2>Courses</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <th scope="row">@course.Id</th>
+                <td>@course.Name</td>
+                <td>@course.Description</td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="Courses" asp-action="Groups" asp-route-courseId="@course.Id">Groups</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

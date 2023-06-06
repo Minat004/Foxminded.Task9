@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<Student>
+
+@{
+    var groupName = ViewData["GroupName"]!.ToString();
+    ViewBag.Title = groupName!;
+    Layout = "_Layout";
+}
+
+<h2>@groupName</h2>
+
+@if (Model.Count == 0)
+{
+    <h3>The group is empty</h3>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">First name</th>
+            <th scope="col">Last name</th>
+            <th scope="col">Group</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <th scope="row">@student.Id</th>
+                <td>@student.FirstName</td>
+                <td>@student.LastName</td>
+                <td>@student.Group!.Name</td>
+                <td>
+                    <div class="d-flex flex-row">
+                        <a class="btn btn-primary mx-2" asp-controller="Students" asp-action="Edit" asp-route-studentId="@student.Id">Edit</a>
+                        @using (Html.BeginForm("Delete", "Students", new { studentId = student.Id }))
+                        {
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<div id="btn-fix">
+    <a class="btn btn-primary btn-square-md rounded-circle" asp-controller="Students" asp-action="Add">
+        <h1><i class="bi bi-person-plus-fill"></i></h1>
+    </a>
+</div>
